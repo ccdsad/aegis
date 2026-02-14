@@ -12,7 +12,7 @@ class TestRiskEngine:
         engine = RiskEngine(limits=RiskLimits(max_quantity=1.0))
         intent = Intent(
             strategy_id='s1',
-            signal_id=uuid4(),
+            signal_uid=uuid4(),
             symbol='BTCUSDT',
             side=SignalSide.BUY,
             quantity=2.0,
@@ -29,7 +29,7 @@ class TestRiskEngine:
         engine = RiskEngine(limits=RiskLimits(max_quantity=10.0, max_notional=1_000.0))
         intent = Intent(
             strategy_id='s1',
-            signal_id=uuid4(),
+            signal_uid=uuid4(),
             symbol='BTCUSDT',
             side=SignalSide.BUY,
             quantity=2.0,

@@ -1,21 +1,18 @@
 from datetime import datetime, timezone
 
 from fastapi import APIRouter
-from pydantic import BaseModel
+from fastapi.responses import ORJSONResponse
+
+from app.api.v1.schemas.strategies import StrategyStatusOut
 
 router = APIRouter(prefix='/strategies', tags=['strategies'])
 
 
-class StrategyStatusOut(BaseModel):
-    """Control-plane strategy status view."""
-
-    strategy_id: str
-    status: str
-    enabled: bool
-    updated_at: datetime
-
-
-@router.get('/{strategy_id}/status', response_model=StrategyStatusOut)
+@router.get(
+    '/{strategy_id}/status',
+    response_model=StrategyStatusOut,
+    response_class=ORJSONResponse,
+)
 def get_strategy_status(strategy_id: str) -> StrategyStatusOut:
     """Return strategy status snapshot.
 

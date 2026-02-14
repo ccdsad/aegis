@@ -1,45 +1,33 @@
-from datetime import datetime
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from pydantic import BaseModel
+from fastapi.responses import ORJSONResponse
 
+from app.api.v1.schemas.orders import IntentAuditOut
 from app.core.lifecycle import Runtime, get_runtime
-from app.domain.risk import RiskReason
 
 router = APIRouter(prefix='/orders', tags=['orders'])
 
 
-class IntentAuditOut(BaseModel):
-    """Serialized intent audit state."""
-
-    id: UUID
-    signal_id: UUID
-    strategy_id: str
-    symbol: str
-    quantity: float
-    reason: RiskReason
-    message: str
-    status: str
-    created_at: datetime
-    updated_at: datetime
-
-
-@router.get('/{intent_id}', response_model=IntentAuditOut)
+@router.get(
+    '/{intent_uid}',
+    response_model=IntentAuditOut,
+    response_class=ORJSONResponse,
+)
 def get_order_audit(
-    intent_id: UUID,
+    intent_uid: UUID,
     runtime: Runtime = Depends(get_runtime),
 ) -> IntentAuditOut:
     """Return stored audit information for one processed intent."""
-    record = runtime.uow.orders.get_intent(intent_id)
+    record = runtime.uow.orders.get_intent(intent_uid)
     if record is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail='Intent audit record not found.',
         )
     return IntentAuditOut(
-        id=record.id,
-        signal_id=record.signal_id,
+        uid=record.uid,
+        signal_uid=record.signal_uid,
         strategy_id=record.strategy_id,
         symbol=record.symbol,
         quantity=record.quantity,

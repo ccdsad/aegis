@@ -61,15 +61,15 @@ class TestSignalsPipeline:
                 'risk_state': {'drawdown': 0.01},
             },
         )
-        intent_id = process_response.json()['intent_id']
+        intent_uid = process_response.json()['intent_uid']
 
-        order_response = await client.get(f'/api/v1/orders/{intent_id}')
-        risk_response = await client.get(f'/api/v1/risk/decisions/{intent_id}')
+        order_response = await client.get(f'/api/v1/orders/{intent_uid}')
+        risk_response = await client.get(f'/api/v1/risk/decisions/{intent_uid}')
 
         assert order_response.status_code == 200
         assert risk_response.status_code == 200
-        assert order_response.json()['id'] == intent_id
-        assert risk_response.json()['intent_id'] == intent_id
+        assert order_response.json()['uid'] == intent_uid
+        assert risk_response.json()['intent_uid'] == intent_uid
 
     async def test_get_strategy_status(self, client: AsyncClient) -> None:
         response = await client.get('/api/v1/strategies/s1/status')

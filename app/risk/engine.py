@@ -21,56 +21,40 @@ class RiskEngine:
             'drawdown': extract_drawdown(state),
             'symbol': intent.symbol,
         }
-
-        if self._limits.kill_switch:
-            return RiskResult(
-                intent=intent,
-                status=RiskStatus.REJECTED,
-                reason=RiskReason.KILL_SWITCH,
-                message='Kill switch is active.',
-                snapshots=snapshots,
-            )
-
-        if intent.symbol in self._limits.blocked_symbols:
-            return RiskResult(
-                intent=intent,
-                status=RiskStatus.REJECTED,
-                reason=RiskReason.INSTRUMENT_BLOCKED,
-                message=f'Symbol {intent.symbol} is blocked.',
-                snapshots=snapshots,
-            )
-
-        if intent.quantity > self._limits.max_quantity:
-            return RiskResult(
-                intent=intent,
-                status=RiskStatus.REJECTED,
-                reason=RiskReason.LIMIT_EXCEEDED,
-                message='Quantity exceeds max_quantity.',
-                snapshots=snapshots,
-            )
-
-        if snapshots['notional'] > self._limits.max_notional:
-            return RiskResult(
-                intent=intent,
-                status=RiskStatus.REJECTED,
-                reason=RiskReason.LIMIT_EXCEEDED,
-                message='Notional exceeds max_notional.',
-                snapshots=snapshots,
-            )
-
-        if snapshots['drawdown'] > self._limits.max_drawdown:
-            return RiskResult(
-                intent=intent,
-                status=RiskStatus.REJECTED,
-                reason=RiskReason.LIMIT_EXCEEDED,
-                message='Drawdown exceeds max_drawdown.',
-                snapshots=snapshots,
-            )
-
-        return RiskResult(
+        risk_result = RiskResult(
             intent=intent,
-            status=RiskStatus.APPROVED,
+            status=RiskStatus.REJECTED,
             reason=RiskReason.OK,
-            message='Intent approved by risk engine.',
+            message=None,
             snapshots=snapshots,
         )
+
+        if self._limits.kill_switch:
+            risk_result.reason = RiskReason.KILL_SWITCH
+            risk_result.message = 'Kill switch is active.'
+            return risk_result
+
+        if intent.symbol in self._limits.blocked_symbols:
+            risk_result.reason = RiskReason.INSTRUMENT_BLOCKED
+            risk_result.message = f'Symbol {intent.symbol} is blocked.'
+            return risk_result
+
+        if intent.quantity > self._limits.max_quantity:
+            risk_result.reason = RiskReason.LIMIT_EXCEEDED
+            risk_result.message = 'Quantity exceeds max_quantity.'
+            return risk_result
+
+        if snapshots['notional'] > self._limits.max_notional:
+            risk_result.reason = RiskReason.LIMIT_EXCEEDED
+            risk_result.message = 'Notional exceeds max_notional.'
+            return risk_result
+
+        if snapshots['drawdown'] > self._limits.max_drawdown:
+            risk_result.reason = RiskReason.LIMIT_EXCEEDED
+            risk_result.message = 'Drawdown exceeds max_drawdown.'
+            return risk_result
+
+        risk_result.status = RiskStatus.APPROVED
+        risk_result.reason = RiskReason.OK
+        risk_result.message = 'Intent approved by risk engine.'
+        return risk_result

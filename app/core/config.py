@@ -15,7 +15,6 @@ class Settings(BaseSettings):
     """Application settings loaded from environment."""
 
     mode: AppMode = AppMode.PAPER
-    api_v1_prefix: str = '/api/v1'
 
     model_config = SettingsConfigDict(env_prefix='app_')
 

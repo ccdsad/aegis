@@ -28,11 +28,11 @@ class OrdersRepository:
             if risk_result.approved
             else ProcessingStatus.REJECTED
         )
-        existing = self._intents.get(intent.id)
+        existing = self._intents.get(intent.uid)
 
         record = IntentRecord(
-            id=intent.id,
-            signal_id=signal.id,
+            uid=intent.uid,
+            signal_uid=signal.uid,
             strategy_id=intent.strategy_id,
             symbol=intent.symbol,
             side=intent.side,
@@ -46,33 +46,33 @@ class OrdersRepository:
             created_at=existing.created_at if existing else now,
             updated_at=now,
         )
-        self._intents[intent.id] = record
+        self._intents[intent.uid] = record
         return record
 
-    def add_fills(self, *, intent_id: UUID, fills: list[Fill]) -> list[FillRecord]:
+    def add_fills(self, *, intent_uid: UUID, fills: list[Fill]) -> list[FillRecord]:
         records: list[FillRecord] = []
         for fill in fills:
             record = FillRecord(
-                id=fill.id,
-                intent_id=intent_id,
-                order_id=fill.order_id,
+                uid=fill.uid,
+                intent_uid=intent_uid,
+                order_uid=fill.order_uid,
                 quantity=fill.quantity,
                 price=fill.price,
                 fee=fill.fee,
                 occurred_at=fill.occurred_at,
             )
-            self._fills[fill.id] = record
+            self._fills[fill.uid] = record
             records.append(record)
         return records
 
-    def get_intent(self, intent_id: UUID) -> IntentRecord | None:
-        return self._intents.get(intent_id)
+    def get_intent(self, intent_uid: UUID) -> IntentRecord | None:
+        return self._intents.get(intent_uid)
 
-    def list_fills_for_intent(self, intent_id: UUID) -> list[FillRecord]:
-        return [fill for fill in self._fills.values() if fill.intent_id == intent_id]
+    def list_fills_for_intent(self, intent_uid: UUID) -> list[FillRecord]:
+        return [fill for fill in self._fills.values() if fill.intent_uid == intent_uid]
 
-    def get_intent_risk_reason(self, intent_id: UUID) -> RiskReason | None:
-        record = self._intents.get(intent_id)
+    def get_intent_risk_reason(self, intent_uid: UUID) -> RiskReason | None:
+        record = self._intents.get(intent_uid)
         if record is None:
             return None
         return record.reason

@@ -37,8 +37,8 @@ class OrderStatus(StrEnum):
 class Order:
     """Executable order created from an approved intent."""
 
-    id: UUID = field(default_factory=uuid4)
-    intent_id: UUID
+    uid: UUID = field(default_factory=uuid4)
+    intent_uid: UUID
     symbol: str
     side: SignalSide
     quantity: float
@@ -57,8 +57,8 @@ class Order:
 class Fill:
     """Execution fill fact produced by simulation or live execution."""
 
-    id: UUID = field(default_factory=uuid4)
-    order_id: UUID
+    uid: UUID = field(default_factory=uuid4)
+    order_uid: UUID
     quantity: float
     price: float
     fee: float = 0.0

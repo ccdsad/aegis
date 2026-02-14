@@ -19,8 +19,8 @@ class ProcessingStatus(StrEnum):
 class IntentRecord:
     """Persisted audit record for one processed signal intent."""
 
-    id: UUID
-    signal_id: UUID
+    uid: UUID
+    signal_uid: UUID
     strategy_id: str
     symbol: str
     side: SignalSide
@@ -29,7 +29,7 @@ class IntentRecord:
     quantity: float
     status: ProcessingStatus
     reason: RiskReason
-    message: str
+    message: str | None
     limit_price: float | None
     created_at: datetime
     updated_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
@@ -39,9 +39,9 @@ class IntentRecord:
 class FillRecord:
     """Persisted execution/simulation fill linked to an intent record."""
 
-    id: UUID
-    intent_id: UUID
-    order_id: UUID
+    uid: UUID
+    intent_uid: UUID
+    order_uid: UUID
     quantity: float
     price: float
     fee: float

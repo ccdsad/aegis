@@ -23,14 +23,14 @@ class RiskReason(StrEnum):
     INVALID_INTENT = 'invalid_intent'
 
 
-@dataclass(slots=True, frozen=True, kw_only=True)
+@dataclass(slots=True, kw_only=True)
 class RiskResult:
     """Risk-check output consumed by execution or simulation runner."""
 
     intent: Intent
     status: RiskStatus
     reason: RiskReason = RiskReason.OK
-    message: str = ''
+    message: str | None = None
     checked_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     snapshots: dict[str, Any] = field(default_factory=dict[str, Any])
 

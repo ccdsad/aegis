@@ -1,5 +1,5 @@
 from types import TracebackType
-from typing import Literal
+from typing import Literal, Self
 
 from app.storage.repositories.orders import OrdersRepository
 from app.storage.repositories.positions import PositionsRepository
@@ -12,7 +12,7 @@ class UnitOfWork:
         self.orders = OrdersRepository()
         self.positions = PositionsRepository()
 
-    def __enter__(self) -> 'UnitOfWork':
+    def __enter__(self) -> Self:
         return self
 
     def __exit__(

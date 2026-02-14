@@ -24,7 +24,7 @@ class SignalType(StrEnum):
 class Signal:
     """Immutable market/strategy signal entering the decision pipeline."""
 
-    id: UUID = field(default_factory=uuid4)
+    uid: UUID = field(default_factory=uuid4)
     strategy_id: str
     symbol: str
     side: SignalSide

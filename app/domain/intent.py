@@ -19,9 +19,9 @@ class IntentType(StrEnum):
 class Intent:
     """Normalized execution request created from one strategy signal."""
 
-    id: UUID = field(default_factory=uuid4)
+    uid: UUID = field(default_factory=uuid4)
     strategy_id: str
-    signal_id: UUID
+    signal_uid: UUID
     symbol: str
     side: SignalSide
     quantity: float
@@ -40,7 +40,7 @@ class Intent:
     ) -> Self:
         return cls(
             strategy_id=signal.strategy_id,
-            signal_id=signal.id,
+            signal_uid=signal.uid,
             symbol=signal.symbol,
             side=signal.side,
             quantity=signal.quantity if quantity is None else quantity,

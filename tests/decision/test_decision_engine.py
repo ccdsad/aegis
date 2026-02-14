@@ -18,6 +18,6 @@ class TestDecisionEngine:
         intent = engine.decide(market_state, signal)
 
         assert intent.strategy_id == signal.strategy_id
-        assert intent.signal_id == signal.id
+        assert intent.signal_uid == signal.uid
         assert intent.quantity == signal.quantity
         assert intent.limit_price == 11.5
